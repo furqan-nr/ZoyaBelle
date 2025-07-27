@@ -63,10 +63,10 @@ A full-stack, elegant e-commerce website for Zoya Belle, an Australian beauty an
    npm install
    ```
 
-2. **Set up Supabase**
-   - Create a new Supabase project
-   - Run the migration files in `supabase/migrations/`
-   - Copy your Supabase URL and anon key
+2. **Set up PostgreSQL Database**
+   - Create a PostgreSQL database on your cPanel hosting
+   - Run the database schema in `database/schema.sql`
+   - Note down your database connection details
 
 3. **Configure environment variables**
    ```bash
@@ -75,15 +75,20 @@ A full-stack, elegant e-commerce website for Zoya Belle, an Australian beauty an
    
    Update `.env` with your credentials:
    ```
-   VITE_SUPABASE_URL=your_supabase_url
-   VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+   VITE_DB_HOST=your_cpanel_host
+   VITE_DB_PORT=5432
+   VITE_DB_NAME=your_database_name
+   VITE_DB_USER=your_username
+   VITE_DB_PASSWORD=your_password
+   VITE_DB_SSL=true
+   VITE_JWT_SECRET=your_jwt_secret_key_min_32_characters
    VITE_STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key
    VITE_PAYPAL_CLIENT_ID=your_paypal_client_id
    ```
 
-4. **Set up Stripe Edge Function**
-   - Deploy the `create-payment-intent` edge function to Supabase
-   - Set the `STRIPE_SECRET_KEY` environment variable in Supabase
+4. **Set up Payment Processing**
+   - Configure Stripe webhooks if needed
+   - Set up PayPal developer account
 
 5. **Start development server**
    ```bash
@@ -124,9 +129,10 @@ A full-stack, elegant e-commerce website for Zoya Belle, an Australian beauty an
 - **homepage_content**: CMS content for homepage
 
 ### Security
-- Row Level Security (RLS) enabled on all tables
-- Secure authentication with Supabase Auth
-- Admin-only access controls for sensitive operations
+- JWT-based authentication system
+- Bcrypt password hashing
+- Database connection security with SSL
+- Input validation and sanitization
 
 ## Deployment
 
@@ -138,9 +144,9 @@ The application can be deployed to any static hosting service:
 - GitHub Pages
 
 ### Backend
-- Supabase handles all backend infrastructure
-- Edge functions deployed to Supabase
-- Database migrations managed through Supabase CLI
+- PostgreSQL database hosted on cPanel
+- JWT-based authentication
+- RESTful API pattern with direct database queries
 
 ## Contributing
 

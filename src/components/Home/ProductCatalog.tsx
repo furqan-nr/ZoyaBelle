@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Filter, Search, Grid, List } from 'lucide-react';
-import { supabase } from '../../lib/supabase';
 import { useCart } from '../../hooks/useCart';
 import type { Product, Category } from '../../types';
 

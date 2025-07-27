@@ -1,7 +1,6 @@
 import { useState, useEffect, createContext, useContext } from 'react';
-import { User } from '@supabase/supabase-js';
-import { supabase, getCurrentProfile } from '../lib/supabase';
-import type { User as Profile } from '../types';
+import { User, Profile } from '../types';
+import { getCurrentUser, getCurrentProfile, onAuthStateChange } from '../lib/supabase';
 
 interface AuthContextType {
   user: User | null;
@@ -32,28 +31,34 @@ export const useAuthState = () => {
 
   useEffect(() => {
     const getInitialSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setUser(session?.user || null);
-      
-      if (session?.user) {
-        try {
-          const userProfile = await getCurrentProfile();
-          setProfile(userProfile);
-        } catch (error) {
-          console.error('Error fetching profile:', error);
+      try {
+        const currentUser = await getCurrentUser();
+        setUser(currentUser);
+        
+        if (currentUser) {
+          try {
+            const userProfile = await getCurrentProfile();
+            setProfile(userProfile);
+          } catch (error) {
+            console.error('Error fetching profile:', error);
+          }
         }
+        
+        setLoading(false);
+      } catch (error) {
+        console.error('Error getting initial session:', error);
+        setLoading(false);
       }
-      
-      setLoading(false);
     };
 
     getInitialSession();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+    const { unsubscribe } = onAuthStateChange(
       async (event, session) => {
-        setUser(session?.user || null);
+        const sessionUser = session?.user || null;
+        setUser(sessionUser);
         
-        if (session?.user) {
+        if (sessionUser) {
           try {
             const userProfile = await getCurrentProfile();
             setProfile(userProfile);
@@ -70,7 +75,7 @@ export const useAuthState = () => {
     );
 
     return () => {
-      subscription.unsubscribe();
+      unsubscribe();
     };
   }, []);
 

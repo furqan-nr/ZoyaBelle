@@ -9,7 +9,7 @@ import { FeaturedCollections } from './components/Home/FeaturedCollections';
 import { ProductCatalog } from './components/Home/ProductCatalog';
 import { AboutSection } from './components/Home/AboutSection';
 import { ReviewsSection } from './components/Home/ReviewsSection';
-import { supabase } from './lib/supabase';
+import { productsAPI } from './lib/api';
 import type { Product, Category } from './types';
 // ...existing code...
 import { WhatsAppButton } from './components/UI/WhatsAppButton';
@@ -27,31 +27,30 @@ function HomePage() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const { data: productsData, error: productsError } = await supabase
-          .from('products')
-          .select('*')
-          .order('created_at', { ascending: false });
-        if (productsError || !productsData) {
-          // fallback to mock data
-          setProducts([
-            {
-              id: '1',
-              title: 'Velvet Matte Lipstick',
-              slug: 'velvet-matte-lipstick',
-              description: 'Long-lasting matte lipstick in Ruby Red',
-              price: 35,
-              discount_percentage: 25,
-              category_id: '1',
-              in_stock: true,
-              stock_quantity: 10,
-              is_featured: true,
-              collection_tag: 'Best Sellers',
-              created_at: '',
-              updated_at: '',
-              product_images: [
-                { id: 'img1', product_id: '1', image_url: 'https://images.pexels.com/photos/2533266/pexels-photo-2533266.jpeg', sort_order: 1, created_at: '' }
-              ]
-            },
+        const products = await productsAPI.getAll();
+        setProducts(products);
+      } catch (error) {
+        console.warn('Database error, using mock data:', error);
+        // fallback to mock data
+        setProducts([
+          {
+            id: '1',
+            title: 'Velvet Matte Lipstick',
+            slug: 'velvet-matte-lipstick',
+            description: 'Long-lasting matte lipstick in Ruby Red',
+            price: 35,
+            discount_percentage: 25,
+            category_id: '1',
+            in_stock: true,
+            stock_quantity: 10,
+            is_featured: true,
+            collection_tag: 'Best Sellers',
+            created_at: '',
+            updated_at: '',
+            product_images: [
+              { id: 'img1', product_id: '1', image_url: 'https://images.pexels.com/photos/2533266/pexels-photo-2533266.jpeg', sort_order: 1, created_at: '' }
+            ]
+          },
             {
               id: '2',
               title: 'Radiant Foundation SPF 30',
@@ -89,9 +88,6 @@ function HomePage() {
               ]
             }
           ]);
-        } else {
-          setProducts(productsData);
-        }
       } finally {
         setLoading(false);
       }

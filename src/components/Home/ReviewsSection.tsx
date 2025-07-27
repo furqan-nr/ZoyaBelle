@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Star } from 'lucide-react';
-import { supabase } from '../../lib/supabase';
+import { reviewsAPI } from '../../lib/api';
 import type { Review } from '../../types';
 
 export const ReviewsSection: React.FC = () => {
@@ -10,80 +10,79 @@ export const ReviewsSection: React.FC = () => {
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const { data, error } = await supabase
-          .from('reviews')
-          .select('*, profiles(full_name)')
-          .eq('is_approved', true)
-          .order('created_at', { ascending: false })
-          .limit(6);
-
-        if (error || !data) {
-          console.warn('Database error or reviews table not found, using mock data:', error?.message);
-          // Use mock data when database isn't set up
-          setReviews([
-            {
-              id: '1',
-              rating: 5,
-              comment: 'Absolutely love the quality of products from Zoya Belle! The lipstick lasted all day and the color was perfect.',
-              created_at: '2024-01-15T10:30:00Z',
-              profiles: { full_name: 'Sarah Johnson' }
-            },
-            {
-              id: '2',
-              rating: 5,
-              comment: 'Fast shipping and beautiful packaging. The skincare products have made such a difference to my routine.',
-              created_at: '2024-01-10T14:20:00Z',
-              profiles: { full_name: 'Emma Wilson' }
-            },
-            {
-              id: '3',
-              rating: 4,
-              comment: 'Great customer service and high-quality fashion pieces. Will definitely be ordering again!',
-              created_at: '2024-01-08T09:15:00Z',
-              profiles: { full_name: 'Jessica Chen' }
-            },
-            {
-              id: '4',
-              rating: 5,
-              comment: 'The foundation is amazing - perfect match and long-lasting coverage. Highly recommend!',
-              created_at: '2024-01-05T16:45:00Z',
-              profiles: { full_name: 'Olivia Brown' }
-            }
-          ]);
-        } else {
-          setReviews(data || []);
-        }
+        const reviews = await reviewsAPI.getAll();
+        setReviews(reviews);
       } catch (error) {
-        console.warn('Using mock reviews data due to database setup');
-        // Fallback to mock data
+        console.warn('Database error, using mock data:', error);
+        // Use mock data when database isn't set up
         setReviews([
           {
             id: '1',
+            product_id: '1',
+            user_id: '1',
             rating: 5,
             comment: 'Absolutely love the quality of products from Zoya Belle! The lipstick lasted all day and the color was perfect.',
+            is_approved: true,
             created_at: '2024-01-15T10:30:00Z',
-            profiles: { full_name: 'Sarah Johnson' }
+            profiles: { 
+              id: '1',
+              full_name: 'Sarah Johnson',
+              email: 'sarah@example.com',
+              is_admin: false,
+              created_at: '2024-01-01T00:00:00Z',
+              updated_at: '2024-01-01T00:00:00Z'
+            }
           },
           {
             id: '2',
+            product_id: '1',
+            user_id: '2',
             rating: 5,
             comment: 'Fast shipping and beautiful packaging. The skincare products have made such a difference to my routine.',
+            is_approved: true,
             created_at: '2024-01-10T14:20:00Z',
-            profiles: { full_name: 'Emma Wilson' }
+            profiles: { 
+              id: '2',
+              full_name: 'Emma Wilson',
+              email: 'emma@example.com',
+              is_admin: false,
+              created_at: '2024-01-01T00:00:00Z',
+              updated_at: '2024-01-01T00:00:00Z'
+            }
           },
           {
             id: '3',
+            product_id: '1',
+            user_id: '3',
             rating: 4,
             comment: 'Great customer service and high-quality fashion pieces. Will definitely be ordering again!',
+            is_approved: true,
             created_at: '2024-01-08T09:15:00Z',
-            profiles: { full_name: 'Jessica Chen' }
+            profiles: { 
+              id: '3',
+              full_name: 'Jessica Chen',
+              email: 'jessica@example.com',
+              is_admin: false,
+              created_at: '2024-01-01T00:00:00Z',
+              updated_at: '2024-01-01T00:00:00Z'
+            }
           },
           {
             id: '4',
+            product_id: '1',
+            user_id: '4',
             rating: 5,
             comment: 'The foundation is amazing - perfect match and long-lasting coverage. Highly recommend!',
+            is_approved: true,
             created_at: '2024-01-05T16:45:00Z',
-            profiles: { full_name: 'Olivia Brown' }
+            profiles: { 
+              id: '4',
+              full_name: 'Olivia Brown',
+              email: 'olivia@example.com',
+              is_admin: false,
+              created_at: '2024-01-01T00:00:00Z',
+              updated_at: '2024-01-01T00:00:00Z'
+            }
           }
         ]);
       } finally {

@@ -64,7 +64,7 @@ export const AboutSection: React.FC = () => {
           {/* Image */}
           <div className="relative">
             <img
-              src="https://images.pexels.com/photos/3762811/pexels-photo-3762811.jpeg"
+              src="/assets/about.png"
               alt="About Zoya Belle"
               className="rounded-lg shadow-xl"
             />

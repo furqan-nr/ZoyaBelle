@@ -1,93 +1,158 @@
-import { createClient } from '@supabase/supabase-js';
+import { authAPI } from './api';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://placeholder.supabase.co';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'placeholder-key';
+// User interface for authentication
+export interface User {
+  id: string;
+  email: string;
+  full_name?: string;
+}
 
-// Check if Supabase is properly configured
-const isSupabaseConfigured = supabaseUrl !== 'https://placeholder.supabase.co' && 
-                            supabaseAnonKey !== 'placeholder-key' &&
-                            supabaseUrl.includes('.supabase.co');
+export interface Profile {
+  id: string;
+  full_name?: string;
+  email?: string;
+  phone?: string;
+  is_admin: boolean;
+  created_at: string;
+  updated_at: string;
+}
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
-
-// Helper function to check if Supabase is configured
-export const isSupabaseReady = () => isSupabaseConfigured;
+// Current user storage
+let currentUser: User | null = null;
+let currentProfile: Profile | null = null;
 
 // Auth helpers
 export const signUp = async (email: string, password: string, fullName: string) => {
-  if (!isSupabaseConfigured) {
-    throw new Error('Supabase is not configured. Please set up your environment variables.');
+  try {
+    const response = await authAPI.signUp(email, password, fullName);
+    
+    // Store token and user
+    localStorage.setItem('authToken', response.token);
+    currentUser = response.user;
+    
+    // Notify auth state change
+    notifyAuthStateChange('SIGNED_UP', { user: response.user, access_token: response.token });
+    
+    return { user: response.user, session: { access_token: response.token, user: response.user } };
+  } catch (error) {
+    console.error('Sign up error:', error);
+    throw error;
   }
-  
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password,
-  });
-
-  if (error) throw error;
-
-  if (data.user) {
-    // Create profile
-    const { error: profileError } = await supabase
-      .from('profiles')
-      .insert({
-        id: data.user.id,
-        full_name: fullName,
-        email,
-      });
-
-    if (profileError) throw profileError;
-  }
-
-  return data;
 };
 
 export const signIn = async (email: string, password: string) => {
-  if (!isSupabaseConfigured) {
-    throw new Error('Supabase is not configured. Please set up your environment variables.');
+  try {
+    const response = await authAPI.signIn(email, password);
+    
+    // Store token and user
+    localStorage.setItem('authToken', response.token);
+    currentUser = response.user;
+    
+    // Notify auth state change
+    notifyAuthStateChange('SIGNED_IN', { user: response.user, access_token: response.token });
+    
+    return { 
+      user: response.user,
+      session: { access_token: response.token, user: response.user }
+    };
+  } catch (error) {
+    console.error('Sign in error:', error);
+    throw error;
   }
-  
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
-
-  if (error) throw error;
-  return data;
 };
 
 export const signOut = async () => {
-  if (!isSupabaseConfigured) {
-    throw new Error('Supabase is not configured. Please set up your environment variables.');
-  }
+  localStorage.removeItem('authToken');
+  currentUser = null;
+  currentProfile = null;
   
-  const { error } = await supabase.auth.signOut();
-  if (error) throw error;
+  // Notify auth state change
+  notifyAuthStateChange('SIGNED_OUT', null);
 };
 
-export const getCurrentUser = async () => {
-  if (!isSupabaseConfigured) {
-    return null;
+export const getCurrentUser = async (): Promise<User | null> => {
+  if (currentUser) return currentUser;
+
+  const token = localStorage.getItem('authToken');
+  if (!token) return null;
+
+  try {
+    const response = await authAPI.verifyToken();
+    if (response.valid) {
+      const profile = await authAPI.getProfile();
+      currentUser = {
+        id: profile.id,
+        email: profile.email,
+        full_name: profile.full_name
+      };
+      return currentUser;
+    }
+  } catch (error) {
+    console.error('Get current user error:', error);
+    localStorage.removeItem('authToken');
   }
-  
-  const { data: { user } } = await supabase.auth.getUser();
-  return user;
+
+  return null;
 };
 
-export const getCurrentProfile = async () => {
-  if (!isSupabaseConfigured) {
-    return null;
-  }
-  
+export const getCurrentProfile = async (): Promise<Profile | null> => {
   const user = await getCurrentUser();
   if (!user) return null;
 
-  const { data, error } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', user.id)
-    .single();
+  if (currentProfile && currentProfile.id === user.id) {
+    return currentProfile;
+  }
 
-  if (error) throw error;
-  return data;
+  try {
+    const profile = await authAPI.getProfile();
+    currentProfile = profile;
+    return currentProfile;
+  } catch (error) {
+    console.error('Get current profile error:', error);
+    return null;
+  }
 };
+
+// Auth state change callback type
+type AuthStateChangeCallback = (event: string, session: any) => void;
+
+// Auth state management
+const authStateCallbacks: AuthStateChangeCallback[] = [];
+
+export const onAuthStateChange = (callback: AuthStateChangeCallback) => {
+  authStateCallbacks.push(callback);
+  
+  // Return unsubscribe function
+  return {
+    unsubscribe: () => {
+      const index = authStateCallbacks.indexOf(callback);
+      if (index > -1) {
+        authStateCallbacks.splice(index, 1);
+      }
+    }
+  };
+};
+
+// Notify auth state change
+const notifyAuthStateChange = (event: string, session: any) => {
+  authStateCallbacks.forEach(callback => {
+    callback(event, session);
+  });
+};
+
+// Initialize auth state on page load
+const initializeAuth = async () => {
+  try {
+    const user = await getCurrentUser();
+    const session = user ? { access_token: localStorage.getItem('authToken'), user } : null;
+    
+    notifyAuthStateChange('INITIAL_SESSION', session);
+  } catch (error) {
+    console.error('Initialize auth error:', error);
+  }
+};
+
+// Call initialization
+if (typeof window !== 'undefined') {
+  initializeAuth();
+}

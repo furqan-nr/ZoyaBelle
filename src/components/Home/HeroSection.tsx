@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ChevronDown } from 'lucide-react';
-import { supabase } from '../../lib/supabase';
+import { homepageAPI } from '../../lib/api';
 import type { HomepageContent } from '../../types';
 
 export const HeroSection: React.FC = () => {
@@ -9,26 +9,10 @@ export const HeroSection: React.FC = () => {
   useEffect(() => {
     const fetchContent = async () => {
       try {
-        const { data, error } = await supabase
-          .from('homepage_content')
-          .select('*')
-          .single();
-
-        if (error || !data) {
-          console.warn('Database error or homepage_content table not found, using default content:', error?.message);
-          // Use default content when database isn't set up
-          setContent({
-            id: '',
-            hero_title: 'BEYOND SHOPPING, IT\'S A LIFESTYLE',
-            hero_subtitle: 'Discover premium beauty and fashion essentials curated just for you. Elevate your style with our exclusive collections.',
-            hero_image_url: 'https://images.pexels.com/photos/3762800/pexels-photo-3762800.jpeg',
-            updated_at: '',
-          });
-        } else {
-          setContent(data);
-        }
+        const content = await homepageAPI.getContent();
+        setContent(content);
       } catch (error) {
-        console.warn('Using default homepage content due to database setup');
+        console.warn('Database error, using default homepage content:', error);
         // Fallback to default content
         setContent({
           id: '',

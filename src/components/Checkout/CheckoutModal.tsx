@@ -7,7 +7,7 @@ import { PAYPAL_CLIENT_ID, createPayPalOrder, onPayPalApprove } from '../../lib/
 import { StripeCheckoutForm } from './StripeCheckoutForm';
 import { useCart } from '../../hooks/useCart';
 import { useAuth } from '../../hooks/useAuth';
-import { supabase } from '../../lib/supabase';
+import { ordersAPI } from '../../lib/api';
 import { v4 as uuidv4 } from 'uuid';
 
 interface CheckoutModalProps {
@@ -74,42 +74,28 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose })
     try {
       const orderData = {
         id: uuidv4(),
-        user_id: user?.id,
-        total_amount: finalTotal,
+        user_id: user.id,
+        total_amount: total,
         status: 'confirmed',
         payment_status: 'paid',
         payment_method: paymentMethod,
-        shipping_address: shippingInfo,
+        shipping_address: JSON.stringify(shippingInfo),
         notes: `Payment ID: ${paymentData.id || paymentData.orderID}`,
+        items: items.map(item => {
+          const unitPrice = item.product.discount_percentage > 0 
+            ? item.product.price * (1 - item.product.discount_percentage / 100)
+            : item.product.price;
+          return {
+            product_id: item.product.id,
+            quantity: item.quantity,
+            unit_price: unitPrice,
+            total_price: unitPrice * item.quantity
+          };
+        })
       };
 
-      const { data: order, error: orderError } = await supabase
-        .from('orders')
-        .insert(orderData)
-        .select()
-        .single();
-
-      if (orderError) throw orderError;
-
-      // Create order items
-      const orderItems = items.map(item => ({
-        order_id: order.id,
-        product_id: item.product.id,
-        quantity: item.quantity,
-        unit_price: item.product.discount_percentage > 0 
-          ? item.product.price * (1 - item.product.discount_percentage / 100)
-          : item.product.price,
-        total_price: (item.product.discount_percentage > 0 
-          ? item.product.price * (1 - item.product.discount_percentage / 100)
-          : item.product.price) * item.quantity,
-      }));
-
-      const { error: itemsError } = await supabase
-        .from('order_items')
-        .insert(orderItems);
-
-      if (itemsError) throw itemsError;
-
+      // Create order with items
+      const order = await ordersAPI.create(orderData);
       setOrderId(order.id);
       setStep('confirmation');
       clearCart();
