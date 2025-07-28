@@ -7,24 +7,13 @@ export const HeroSection: React.FC = () => {
   const [content, setContent] = useState<HomepageContent | null>(null);
 
   useEffect(() => {
-    const fetchContent = async () => {
-      try {
-        const content = await homepageAPI.getContent();
-        setContent(content);
-      } catch (error) {
-        console.warn('Database error, using default homepage content:', error);
-        // Fallback to default content
-        setContent({
-          id: '',
-          hero_title: 'BEYOND SHOPPING, IT\'S A LIFESTYLE',
-          hero_subtitle: 'Discover premium beauty and fashion essentials curated just for you. Elevate your style with our exclusive collections.',
-          hero_image_url: 'https://images.pexels.com/photos/3762800/pexels-photo-3762800.jpeg',
-          updated_at: '',
-        });
-      }
-    };
-
-    fetchContent();
+    setContent({
+      id: '',
+      hero_title: 'BEYOND SHOPPING, IT\'S A LIFESTYLE',
+      hero_subtitle: 'Discover premium beauty and fashion essentials curated just for you. Elevate your style with our exclusive collections.',
+      hero_image_url: '/assets/hero.png',
+      updated_at: '',
+    });
   }, []);
 
   const scrollToProducts = () => {

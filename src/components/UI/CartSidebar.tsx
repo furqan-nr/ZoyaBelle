@@ -1,7 +1,7 @@
 import React from 'react';
 import { X, Plus, Minus, ShoppingBag } from 'lucide-react';
 import { useCart } from '../../hooks/useCart';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuthState } from '../../hooks/useAuth';
 
 interface CartSidebarProps {
   isOpen: boolean;
@@ -11,7 +11,7 @@ interface CartSidebarProps {
 
 export const CartSidebar: React.FC<CartSidebarProps> = ({ isOpen, onClose, onCheckout }) => {
   const { items, removeFromCart, updateQuantity, totalPrice, clearCart } = useCart();
-  const { user } = useAuth();
+  const { user } = useAuthState();
 
   const getDiscountedPrice = (price: number, discount: number) => {
     return discount > 0 ? price * (1 - discount / 100) : price;

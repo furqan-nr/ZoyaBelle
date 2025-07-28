@@ -1,13 +1,15 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+
+const API_BASE_URL: string = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+
 
 class ApiService {
+  baseURL: string;
   constructor() {
     this.baseURL = API_BASE_URL;
   }
 
-  async request(endpoint: string, options: RequestInit = {}) {
+  async request<T = any>(endpoint: string, options: RequestInit = {}): Promise<T> {
     const url = `${this.baseURL}${endpoint}`;
-    
     const config: RequestInit = {
       ...options,
       headers: {
@@ -15,7 +17,6 @@ class ApiService {
         ...options.headers,
       },
     };
-
     // Add auth token if available
     const token = localStorage.getItem('authToken');
     if (token) {
@@ -24,15 +25,12 @@ class ApiService {
         Authorization: `Bearer ${token}`,
       };
     }
-
     try {
       const response = await fetch(url, config);
-      
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ message: 'Network error' }));
         throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
       }
-
       return await response.json();
     } catch (error) {
       console.error(`API request failed: ${endpoint}`, error);
@@ -40,26 +38,26 @@ class ApiService {
     }
   }
 
-  async get(endpoint: string) {
-    return this.request(endpoint, { method: 'GET' });
+  async get<T = any>(endpoint: string): Promise<T> {
+    return this.request<T>(endpoint, { method: 'GET' });
   }
 
-  async post(endpoint: string, data: any) {
-    return this.request(endpoint, {
+  async post<T = any>(endpoint: string, data: any): Promise<T> {
+    return this.request<T>(endpoint, {
       method: 'POST',
       body: JSON.stringify(data),
     });
   }
 
-  async put(endpoint: string, data: any) {
-    return this.request(endpoint, {
+  async put<T = any>(endpoint: string, data: any): Promise<T> {
+    return this.request<T>(endpoint, {
       method: 'PUT',
       body: JSON.stringify(data),
     });
   }
 
-  async delete(endpoint: string) {
-    return this.request(endpoint, { method: 'DELETE' });
+  async delete<T = any>(endpoint: string): Promise<T> {
+    return this.request<T>(endpoint, { method: 'DELETE' });
   }
 }
 
@@ -69,13 +67,10 @@ export const apiService = new ApiService();
 export const authAPI = {
   signUp: (email: string, password: string, fullName: string) =>
     apiService.post('/auth/signup', { email, password, fullName }),
-  
   signIn: (email: string, password: string) =>
     apiService.post('/auth/signin', { email, password }),
-  
   getProfile: () =>
     apiService.get('/auth/profile'),
-  
   verifyToken: () =>
     apiService.get('/auth/verify'),
 };
@@ -84,10 +79,8 @@ export const authAPI = {
 export const productsAPI = {
   getAll: () =>
     apiService.get('/products'),
-  
   getById: (id: string) =>
     apiService.get(`/products/${id}`),
-  
   getCategories: () =>
     apiService.get('/products/categories/all'),
 };
@@ -96,10 +89,8 @@ export const productsAPI = {
 export const reviewsAPI = {
   getAll: () =>
     apiService.get('/reviews'),
-  
   getByProduct: (productId: string) =>
     apiService.get(`/reviews/product/${productId}`),
-  
   create: (productId: string, rating: number, comment?: string) =>
     apiService.post('/reviews', { product_id: productId, rating, comment }),
 };
@@ -108,10 +99,8 @@ export const reviewsAPI = {
 export const ordersAPI = {
   create: (orderData: any) =>
     apiService.post('/orders', orderData),
-  
   getMyOrders: () =>
     apiService.get('/orders/my-orders'),
-  
   getById: (id: string) =>
     apiService.get(`/orders/${id}`),
 };
@@ -120,7 +109,6 @@ export const ordersAPI = {
 export const homepageAPI = {
   getContent: () =>
     apiService.get('/homepage/content'),
-  
   getStoreInfo: () =>
     apiService.get('/homepage/store-info'),
 };

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Search, ShoppingBag, User, Menu, X } from 'lucide-react';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuthState } from '../../hooks/useAuth';
 import { useCart } from '../../hooks/useCart';
 
 interface HeaderProps {
@@ -10,7 +10,7 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ onCartOpen, onAuthOpen }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { user, profile } = useAuth();
+  const { user } = useAuthState();
   const { totalItems } = useCart();
 
   const navigation = [
@@ -72,16 +72,6 @@ export const Header: React.FC<HeaderProps> = ({ onCartOpen, onAuthOpen }) => {
               )}
             </button>
 
-            {/* Admin Link */}
-            {profile?.is_admin && (
-              <a
-                href="/admin"
-                className="text-gray-700 hover:text-pink-300 transition-colors duration-200 text-sm font-medium"
-              >
-                Admin
-              </a>
-            )}
-
             {/* Mobile menu button */}
             <button
               className="md:hidden text-gray-700 hover:text-pink-300 transition-colors duration-200"
@@ -106,14 +96,6 @@ export const Header: React.FC<HeaderProps> = ({ onCartOpen, onAuthOpen }) => {
                   {item.name}
                 </a>
               ))}
-              {profile?.is_admin && (
-                <a
-                  href="/admin"
-                  className="text-gray-700 hover:text-pink-300 transition-colors duration-200 text-sm font-medium"
-                >
-                  Admin Dashboard
-                </a>
-              )}
             </nav>
           </div>
         )}

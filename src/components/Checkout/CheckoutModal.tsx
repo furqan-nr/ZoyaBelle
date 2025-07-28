@@ -6,7 +6,7 @@ import { stripePromise } from '../../lib/stripe';
 import { PAYPAL_CLIENT_ID, createPayPalOrder, onPayPalApprove } from '../../lib/paypal';
 import { StripeCheckoutForm } from './StripeCheckoutForm';
 import { useCart } from '../../hooks/useCart';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuthState } from '../../hooks/useAuth';
 import { ordersAPI } from '../../lib/api';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -34,11 +34,11 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose })
   const [orderId, setOrderId] = useState<string | null>(null);
   
   const { items, totalPrice, clearCart } = useCart();
-  const { user, profile } = useAuth();
+  const { user } = useAuthState();
 
   const [shippingInfo, setShippingInfo] = useState<ShippingInfo>({
-    fullName: profile?.full_name || '',
-    email: profile?.email || '',
+    fullName: user?.full_name || '',
+    email: user?.email || '',
     phone: '',
     address: '',
     city: '',
@@ -51,14 +51,14 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose })
   const finalTotal = totalPrice + shippingCost;
 
   useEffect(() => {
-    if (profile) {
+    if (user) {
       setShippingInfo(prev => ({
         ...prev,
-        fullName: profile.full_name || '',
-        email: profile.email || '',
+        fullName: user.full_name || '',
+        email: user.email || '',
       }));
     }
-  }, [profile]);
+  }, [user]);
 
   const handleShippingSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,11 +71,15 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose })
   };
 
   const createOrder = async (paymentData: any) => {
+    if (!user) {
+      throw new Error('User must be logged in to place an order');
+    }
+    
     try {
       const orderData = {
         id: uuidv4(),
         user_id: user.id,
-        total_amount: total,
+        total_amount: finalTotal,
         status: 'confirmed',
         payment_status: 'paid',
         payment_method: paymentMethod,
