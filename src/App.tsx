@@ -135,7 +135,9 @@ function HomePage() {
             <AboutSection />
           </div>
         </section>
-        <Footer />
+        <div className="relative z-20">
+          <Footer />
+        </div>
         <WhatsAppButton />
       </div>
     );
