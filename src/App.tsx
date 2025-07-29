@@ -11,13 +11,14 @@ import { AboutSection } from './components/Home/AboutSection';
 import { ReviewsSection } from './components/Home/ReviewsSection';
 import { productsAPI } from './lib/api';
 import type { Product, Category } from './types';
-// ...existing code...
 import { WhatsAppButton } from './components/UI/WhatsAppButton';
 import { CartSidebar } from './components/UI/CartSidebar';
 import { AuthModal } from './components/Auth/AuthModal';
 import { CheckoutModal } from './components/Checkout/CheckoutModal';
 
+
 function HomePage() {
+  const [view, setView] = useState<'landing' | 'women'>('landing');
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
@@ -25,32 +26,31 @@ function HomePage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const products = await productsAPI.getAll();
-        setProducts(products);
-      } catch (error) {
-        console.warn('Database error, using mock data:', error);
-        // fallback to mock data
-        setProducts([
-          {
-            id: '1',
-            title: 'Velvet Matte Lipstick',
-            slug: 'velvet-matte-lipstick',
-            description: 'Long-lasting matte lipstick in Ruby Red',
-            price: 35,
-            discount_percentage: 25,
-            category_id: '1',
-            in_stock: true,
-            stock_quantity: 10,
-            is_featured: true,
-            collection_tag: 'Best Sellers',
-            created_at: '',
-            updated_at: '',
-            product_images: [
-              { id: 'img1', product_id: '1', image_url: 'https://images.pexels.com/photos/2533266/pexels-photo-2533266.jpeg', sort_order: 1, created_at: '' }
-            ]
-          },
+    if (view === 'women') {
+      const fetchProducts = async () => {
+        try {
+          const products = await productsAPI.getAll();
+          setProducts(products);
+        } catch (error) {
+          setProducts([
+            {
+              id: '1',
+              title: 'Velvet Matte Lipstick',
+              slug: 'velvet-matte-lipstick',
+              description: 'Long-lasting matte lipstick in Ruby Red',
+              price: 35,
+              discount_percentage: 25,
+              category_id: '1',
+              in_stock: true,
+              stock_quantity: 10,
+              is_featured: true,
+              collection_tag: 'Best Sellers',
+              created_at: '',
+              updated_at: '',
+              product_images: [
+                { id: 'img1', product_id: '1', image_url: 'https://images.pexels.com/photos/2533266/pexels-photo-2533266.jpeg', sort_order: 1, created_at: '' }
+              ]
+            },
             {
               id: '2',
               title: 'Radiant Foundation SPF 30',
@@ -88,18 +88,66 @@ function HomePage() {
               ]
             }
           ]);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchProducts();
-  }, []);
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchProducts();
+    }
+  }, [view]);
 
+  if (view === 'landing') {
+    return (
+      <div className="min-h-screen flex flex-col relative" style={{ backgroundImage: "url('/assets/main.png')", backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed' }}>
+        {/* Overlay for better readability */}
+        <div className="absolute inset-0 bg-white bg-opacity-60 z-0 pointer-events-none" />
+        {/* Header with only logo */}
+        <header className="bg-white bg-opacity-80 shadow-sm sticky top-0 z-10">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center">
+            <h1 className="text-3xl font-bold text-gray-900 mx-auto" style={{ fontFamily: 'Playfair Display' }}>
+              Zoya Belle
+            </h1>
+          </div>
+        </header>
+        {/* Category selection */}
+        <section className="flex flex-col items-center justify-center py-24 z-10">
+          <div className="bg-white bg-opacity-80 rounded-xl shadow-lg p-8 flex flex-col items-center space-y-6">
+            <h2 className="text-2xl font-semibold mb-4 text-gray-800">Select Your Category</h2>
+            <div className="flex space-x-8">
+              <button
+                className="px-8 py-4 rounded-full text-xl font-bold bg-pink-300 text-white shadow-lg hover:bg-pink-400 transition-colors duration-200 focus:outline-none"
+                onClick={() => setView('women')}
+              >
+                Women
+              </button>
+              <button
+                className="px-8 py-4 rounded-full text-xl font-bold bg-blue-400 text-white shadow-lg hover:bg-blue-500 transition-colors duration-200 focus:outline-none"
+                onClick={() => alert('Men section coming soon!')}
+              >
+                Men
+              </button>
+            </div>
+          </div>
+        </section>
+        {/* About section */}
+        <section className="flex items-center justify-center py-24 z-10">
+          <div className="w-full max-w-4xl bg-white bg-opacity-80 rounded-xl shadow-lg px-4 py-8">
+            <AboutSection />
+          </div>
+        </section>
+        <Footer />
+        <WhatsAppButton />
+      </div>
+    );
+  }
+
+  // Women view (current homepage)
   return (
     <div className="min-h-screen bg-white">
       <Header 
         onCartOpen={() => setIsCartOpen(true)}
         onAuthOpen={() => setIsAuthOpen(true)}
+        onMenClick={() => setView('landing')}
       />
       <main>
         <HeroSection />

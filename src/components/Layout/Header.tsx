@@ -6,9 +6,10 @@ import { useCart } from '../../hooks/useCart';
 interface HeaderProps {
   onCartOpen: () => void;
   onAuthOpen: () => void;
+  onMenClick?: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ onCartOpen, onAuthOpen }) => {
+export const Header: React.FC<HeaderProps> = ({ onCartOpen, onAuthOpen, onMenClick }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user } = useAuthState();
   const { totalItems } = useCart();
@@ -32,7 +33,7 @@ export const Header: React.FC<HeaderProps> = ({ onCartOpen, onAuthOpen }) => {
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex space-x-8">
+          <nav className="hidden md:flex space-x-8 items-center">
             {navigation.map((item) => (
               <a
                 key={item.name}
@@ -42,6 +43,13 @@ export const Header: React.FC<HeaderProps> = ({ onCartOpen, onAuthOpen }) => {
                 {item.name}
               </a>
             ))}
+            {/* Men Button */}
+            <button
+              className="ml-6 px-5 py-2 rounded-full bg-blue-400 text-white font-semibold text-sm shadow hover:bg-blue-500 transition-colors duration-200 focus:outline-none"
+              onClick={onMenClick}
+            >
+              Men
+            </button>
           </nav>
 
           {/* Right side actions */}
