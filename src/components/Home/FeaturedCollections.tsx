@@ -19,12 +19,11 @@ export const FeaturedCollections: React.FC<FeaturedCollectionsProps> = ({ produc
     return discount > 0 ? price * (1 - discount / 100) : price;
   };
 
-  const CollectionGrid: React.FC<{ products: Product[]; title: string }> = ({ products, title }) => (
-    <div className="mb-16">
+  const CollectionGrid: React.FC<{ products: Product[]; title: string; id?: string }> = ({ products, title, id }) => (
+    <div className="mb-16" {...(id ? { id } : {})}>
       <h2 className="text-3xl font-bold text-center mb-8 text-gray-900" style={{ fontFamily: 'Playfair Display' }}>
         {title}
       </h2>
-      
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {products.map((product) => (
           <div
@@ -48,11 +47,9 @@ export const FeaturedCollections: React.FC<FeaturedCollectionsProps> = ({ produc
                 </div>
               )}
             </div>
-            
             <div className="p-4">
               <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">{product.title}</h3>
               <p className="text-gray-600 text-sm mb-3 line-clamp-2">{product.description}</p>
-              
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   {product.discount_percentage > 0 ? (
@@ -70,7 +67,6 @@ export const FeaturedCollections: React.FC<FeaturedCollectionsProps> = ({ produc
                     </span>
                   )}
                 </div>
-                
                 <button
                   disabled={!product.in_stock}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 ${
@@ -102,8 +98,8 @@ export const FeaturedCollections: React.FC<FeaturedCollectionsProps> = ({ produc
           </p>
         </div>
 
-        {newArrivals.length > 0 && <CollectionGrid products={newArrivals} title="New Arrivals" />}
-        {bestSellers.length > 0 && <CollectionGrid products={bestSellers} title="Best Sellers" />}
+        {newArrivals.length > 0 && <CollectionGrid products={newArrivals} title="New Arrivals" id="new-arrivals" />}
+        {bestSellers.length > 0 && <CollectionGrid products={bestSellers} title="Best Sellers" id="best-sellers" />}
         {nazishPicks.length > 0 && <CollectionGrid products={nazishPicks} title="Nazish's Picks" />}
       </div>
     </section>

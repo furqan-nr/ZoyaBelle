@@ -15,9 +15,9 @@ export const Header: React.FC<HeaderProps> = ({ onCartOpen, onAuthOpen, onMenCli
   const { totalItems } = useCart();
 
   const navigation = [
-    { name: 'New Arrivals', href: '#collections' },
-    { name: 'Best Sellers', href: '#collections' },
-    { name: 'Cosmetics', href: '#products' },
+    { name: 'New Arrivals', href: '#new-arrivals' },
+    { name: 'Best Sellers', href: '#best-sellers' },
+    { name: 'Products', href: '#products' },
     { name: 'About', href: '#about' },
   ];
 
