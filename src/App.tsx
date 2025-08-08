@@ -9,6 +9,7 @@ import { FeaturedCollections } from './components/Home/FeaturedCollections';
 import { ProductCatalog } from './components/Home/ProductCatalog';
 import { AboutSection } from './components/Home/AboutSection';
 import { ReviewsSection } from './components/Home/ReviewsSection';
+import { MenCollections } from './components/Home/MenCollections';
 import { productsAPI } from './lib/api';
 import type { Product, Category } from './types';
 import { WhatsAppButton } from './components/UI/WhatsAppButton';
@@ -18,7 +19,7 @@ import { CheckoutModal } from './components/Checkout/CheckoutModal';
 
 
 function HomePage() {
-  const [view, setView] = useState<'landing' | 'women'>('landing');
+  const [view, setView] = useState<'landing' | 'women' | 'men'>('landing');
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
@@ -218,7 +219,7 @@ function HomePage() {
               </button>
               <button
                 className="px-8 py-4 rounded-full text-xl font-bold bg-blue-400 text-white shadow-lg hover:bg-blue-500 transition-colors duration-200 focus:outline-none"
-                onClick={() => alert('Men section coming soon!')}
+                onClick={() => setView('men')}
               >
                 Men
               </button>
@@ -240,40 +241,76 @@ function HomePage() {
   }
 
   // Women view (current homepage)
-  return (
-    <div className="min-h-screen bg-white">
-      <Header 
-        onCartOpen={() => setIsCartOpen(true)}
-        onAuthOpen={() => setIsAuthOpen(true)}
-        onMenClick={() => setView('landing')}
-      />
-      <main>
-        <HeroSection />
-        <FeaturedCollections products={products} />
-        <ProductCatalog products={products} />
-        <AboutSection />
-        <ReviewsSection />
-      </main>
-      <Footer />
-      <WhatsAppButton />
-      <CartSidebar 
-        isOpen={isCartOpen} 
-        onClose={() => setIsCartOpen(false)} 
-        onCheckout={() => {
-          setIsCartOpen(false);
-          setIsCheckoutOpen(true);
-        }}
-      />
-      <AuthModal 
-        isOpen={isAuthOpen} 
-        onClose={() => setIsAuthOpen(false)} 
-      />
-      <CheckoutModal 
-        isOpen={isCheckoutOpen} 
-        onClose={() => setIsCheckoutOpen(false)} 
-      />
-    </div>
-  );
+  if (view === 'women') {
+    return (
+      <div className="min-h-screen bg-white">
+        <Header 
+          onCartOpen={() => setIsCartOpen(true)}
+          onAuthOpen={() => setIsAuthOpen(true)}
+          onMenClick={() => setView('landing')}
+        />
+        <main>
+          <HeroSection />
+          <FeaturedCollections products={products} />
+          <ProductCatalog products={products} />
+          <AboutSection />
+          <ReviewsSection />
+        </main>
+        <Footer />
+        <WhatsAppButton />
+        <CartSidebar 
+          isOpen={isCartOpen} 
+          onClose={() => setIsCartOpen(false)} 
+          onCheckout={() => {
+            setIsCartOpen(false);
+            setIsCheckoutOpen(true);
+          }}
+        />
+        <AuthModal 
+          isOpen={isAuthOpen} 
+          onClose={() => setIsAuthOpen(false)} 
+        />
+        <CheckoutModal 
+          isOpen={isCheckoutOpen} 
+          onClose={() => setIsCheckoutOpen(false)} 
+        />
+      </div>
+    );
+  }
+
+  // Men view (empty sections)
+  if (view === 'men') {
+    return (
+      <div className="min-h-screen bg-white">
+        <Header 
+          onCartOpen={() => setIsCartOpen(true)}
+          onAuthOpen={() => setIsAuthOpen(true)}
+          onMenClick={() => setView('landing')}
+        />
+        <main>
+          <MenCollections />
+        </main>
+        <Footer />
+        <WhatsAppButton />
+        <CartSidebar 
+          isOpen={isCartOpen} 
+          onClose={() => setIsCartOpen(false)} 
+          onCheckout={() => {
+            setIsCartOpen(false);
+            setIsCheckoutOpen(true);
+          }}
+        />
+        <AuthModal 
+          isOpen={isAuthOpen} 
+          onClose={() => setIsAuthOpen(false)} 
+        />
+        <CheckoutModal 
+          isOpen={isCheckoutOpen} 
+          onClose={() => setIsCheckoutOpen(false)} 
+        />
+      </div>
+    );
+  }
 }
 
 function AdminPage() {
