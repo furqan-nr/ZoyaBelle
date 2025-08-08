@@ -252,8 +252,15 @@ function HomePage() {
         />
         <main>
           <HeroSection />
-          <FeaturedCollections products={products} />
+          {/* New Arrivals */}
+          <h2 className="text-2xl font-bold text-center my-8">New Arrivals</h2>
+          <FeaturedCollections products={products.filter(p => p.collection_tag?.toLowerCase().includes('new arrival'))} />
+          {/* Best Sellers */}
+          <h2 className="text-2xl font-bold text-center my-8">Best Sellers</h2>
+          <FeaturedCollections products={products.filter(p => p.collection_tag?.toLowerCase().includes('best seller'))} />
+          {/* All Products */}
           <ProductCatalog products={products} />
+          {/* About Section */}
           <AboutSection />
           <ReviewsSection />
         </main>
