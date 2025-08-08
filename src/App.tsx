@@ -228,7 +228,7 @@ function HomePage() {
         {/* About section */}
         <section className="flex items-center justify-center py-24 z-10">
           <div className="w-full max-w-4xl bg-white bg-opacity-80 rounded-xl shadow-lg px-4 py-8">
-            <AboutSection />
+            <AboutSection onlyWhyChoose />
           </div>
         </section>
         <div className="relative z-20">

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useCart } from '../../hooks/useCart';
 import type { Product } from '../../types';
 
 interface FeaturedCollectionsProps {
@@ -6,6 +7,7 @@ interface FeaturedCollectionsProps {
 }
 
 export const FeaturedCollections: React.FC<FeaturedCollectionsProps> = ({ products }) => {
+  const { addToCart } = useCart();
   // Filter products by collection_tag
   const newArrivals = products.filter(p => p.collection_tag && p.collection_tag.toLowerCase().includes('new arrival'));
   const bestSellers = products.filter(p => p.collection_tag && p.collection_tag.toLowerCase().includes('best seller'));
@@ -17,6 +19,11 @@ export const FeaturedCollections: React.FC<FeaturedCollectionsProps> = ({ produc
 
   const getDiscountedPrice = (price: number, discount: number) => {
     return discount > 0 ? price * (1 - discount / 100) : price;
+  };
+
+  const handleAddToCart = (product: Product) => {
+    addToCart(product);
+    // Optionally add a toast notification here
   };
 
   const CollectionGrid: React.FC<{ products: Product[]; title: string; id?: string }> = ({ products, title, id }) => (
@@ -68,6 +75,7 @@ export const FeaturedCollections: React.FC<FeaturedCollectionsProps> = ({ produc
                   )}
                 </div>
                 <button
+                  onClick={() => handleAddToCart(product)}
                   disabled={!product.in_stock}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 ${
                     product.in_stock
