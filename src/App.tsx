@@ -48,7 +48,7 @@ function HomePage() {
               created_at: '',
               updated_at: '',
               product_images: [
-                { id: 'img1', product_id: '1', image_url: 'https://images.pexels.com/photos/2533266/pexels-photo-2533266.jpeg', sort_order: 1, created_at: '' }
+                { id: 'img1', product_id: '1', image_url: '/assets/velvet-matte-lipstick.png', sort_order: 1, created_at: '' }
               ]
             },
             {
@@ -66,25 +66,121 @@ function HomePage() {
               created_at: '',
               updated_at: '',
               product_images: [
-                { id: 'img2', product_id: '2', image_url: 'https://images.pexels.com/photos/3373736/pexels-photo-3373736.jpeg', sort_order: 1, created_at: '' }
+                { id: 'img2', product_id: '2', image_url: '/assets/foundation.png', sort_order: 1, created_at: '' }
+              ]
+            },
+            // Eye Lashes product for both Product Catalog and Nazish's Pick
+            {
+              id: 'eye-lashes',
+              title: 'Premium Eye Lashes',
+              slug: 'premium-eye-lashes',
+              description: 'Handcrafted, lightweight, and reusable eye lashes for a natural yet glamorous look. Comfortable all-day wear. Includes 3 unique styles in one pack.',
+              price: 45,
+              discount_percentage: 0,
+              category_id: '1',
+              in_stock: true,
+              stock_quantity: 20,
+              is_featured: true,
+              collection_tag: "Nazish's Pick",
+              created_at: '',
+              updated_at: '',
+              product_images: [
+                { id: 'eye_lashes3', product_id: 'eye-lashes', image_url: '/assets/eye_lashes3.jpg', sort_order: 1, created_at: '' },
+                { id: 'eye_lashes1', product_id: 'eye-lashes', image_url: '/assets/eye_lashes1.jpg', sort_order: 2, created_at: '' },
+                { id: 'eye_lashes2', product_id: 'eye-lashes', image_url: '/assets/eye_lashes2.jpg', sort_order: 3, created_at: '' }
+              ]
+            },
+            // New products from unused images
+            {
+              id: 'bangles',
+              title: 'Elegant Bangles Set',
+              slug: 'elegant-bangles-set',
+              description: 'A set of gold-toned bangles, perfect for festive and formal occasions. Durable and lightweight.',
+              price: 60,
+              discount_percentage: 10,
+              category_id: '2',
+              in_stock: true,
+              stock_quantity: 15,
+              is_featured: true,
+              collection_tag: 'Best Sellers',
+              created_at: '',
+              updated_at: '',
+              product_images: [
+                { id: 'bangles', product_id: 'bangles', image_url: '/assets/bangles.jpg', sort_order: 1, created_at: '' }
               ]
             },
             {
-              id: 'dummy-nazish',
-              title: "Nazish's Favorite Dummy Product",
-              slug: 'nazish-favorite-dummy',
-              description: 'This is a dummy product for Nazish\'s Picks section.',
-              price: 99,
-              discount_percentage: 10,
-              category_id: '1',
+              id: 'ear-rings',
+              title: 'Classic Ear Rings',
+              slug: 'classic-ear-rings',
+              description: 'Timeless ear rings with a modern twist. Adds elegance to any look.',
+              price: 35,
+              discount_percentage: 0,
+              category_id: '2',
               in_stock: true,
-              stock_quantity: 5,
+              stock_quantity: 18,
               is_featured: false,
               collection_tag: "Nazish's Pick",
               created_at: '',
               updated_at: '',
               product_images: [
-                { id: 'img3', product_id: 'dummy-nazish', image_url: 'https://images.pexels.com/photos/3762811/pexels-photo-3762811.jpeg', sort_order: 1, created_at: '' }
+                { id: 'ear_rings', product_id: 'ear-rings', image_url: '/assets/ear_rings.jpg', sort_order: 1, created_at: '' }
+              ]
+            },
+            {
+              id: 'bangles-earring-set',
+              title: 'Bangles & Ear Rings Set',
+              slug: 'bangles-earring-set',
+              description: 'A coordinated set of bangles and ear rings for a complete festive look.',
+              price: 85,
+              discount_percentage: 15,
+              category_id: '2',
+              in_stock: true,
+              stock_quantity: 10,
+              is_featured: true,
+              collection_tag: 'New Arrivals',
+              created_at: '',
+              updated_at: '',
+              product_images: [
+                { id: 'bangles-earring-set', product_id: 'bangles-earring-set', image_url: '/assets/bangles ring ear ring set.jpg', sort_order: 1, created_at: '' }
+              ]
+            },
+            {
+              id: 'golden-nails',
+              title: 'Golden Press-On Nails',
+              slug: 'golden-press-on-nails',
+              description: 'Reusable golden press-on nails for instant glam. Includes 24 nails in multiple sizes.',
+              price: 25,
+              discount_percentage: 0,
+              category_id: '3',
+              in_stock: true,
+              stock_quantity: 30,
+              is_featured: false,
+              collection_tag: 'Best Sellers',
+              created_at: '',
+              updated_at: '',
+              product_images: [
+                { id: 'golden_nails1', product_id: 'golden-nails', image_url: '/assets/golden_nails1.jpg', sort_order: 1, created_at: '' },
+                { id: 'golden_nails2', product_id: 'golden-nails', image_url: '/assets/golden_nails2.jpg', sort_order: 2, created_at: '' },
+                { id: 'golden_nails3', product_id: 'golden-nails', image_url: '/assets/golden_nails3.jpg', sort_order: 3, created_at: '' }
+              ]
+            },
+            {
+              id: 'pink-nails',
+              title: 'Pink Press-On Nails',
+              slug: 'pink-press-on-nails',
+              description: 'Reusable pink press-on nails for a soft, feminine look. Includes 24 nails in multiple sizes.',
+              price: 25,
+              discount_percentage: 0,
+              category_id: '3',
+              in_stock: true,
+              stock_quantity: 25,
+              is_featured: false,
+              collection_tag: 'New Arrivals',
+              created_at: '',
+              updated_at: '',
+              product_images: [
+                { id: 'pink_nails', product_id: 'pink-nails', image_url: '/assets/pink_nails.jpg', sort_order: 1, created_at: '' }
               ]
             }
           ]);
