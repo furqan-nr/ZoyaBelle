@@ -247,7 +247,8 @@ function HomePage() {
         <Header 
           onCartOpen={() => setIsCartOpen(true)}
           onAuthOpen={() => setIsAuthOpen(true)}
-          onMenClick={() => setView('landing')}
+          category="women"
+          onSwitchCategory={() => setView('men')}
         />
         <main>
           <HeroSection />
@@ -285,7 +286,8 @@ function HomePage() {
         <Header 
           onCartOpen={() => setIsCartOpen(true)}
           onAuthOpen={() => setIsAuthOpen(true)}
-          onMenClick={() => setView('landing')}
+          category="men"
+          onSwitchCategory={() => setView('women')}
         />
         <main>
           <MenCollections />

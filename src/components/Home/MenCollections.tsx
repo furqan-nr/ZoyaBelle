@@ -1,6 +1,8 @@
 import React from 'react';
 import { useCart } from '../../hooks/useCart';
 import type { Product } from '../../types';
+import { AboutSection } from './AboutSection';
+import { ChevronDown } from 'lucide-react';
 
 // Helper to generate a random discount (0, 10, 20, or 30%)
 const randomDiscount = () => {
@@ -156,6 +158,58 @@ const menProducts: Product[] = [
   },
 ];
 
+const MenHeroSection: React.FC = () => {
+  const content = {
+    hero_title: "MEN'S STYLE, REDEFINED",
+    hero_subtitle: "Explore premium men's fashion essentials. Elevate your wardrobe with our exclusive shirts, tees, and more.",
+    hero_image_url: '/assets/main.png', // You can change to a men-specific hero image if available
+  };
+
+  const scrollToProducts = () => {
+    const productsSection = document.getElementById('products');
+    if (productsSection) {
+      productsSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  return (
+    <section className="relative h-screen flex items-center justify-center overflow-hidden">
+      {/* Background Image */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: `url(${content.hero_image_url})` }}
+      >
+        <div className="absolute inset-0 bg-black bg-opacity-30" />
+      </div>
+      {/* Content */}
+      <div className="relative z-10 text-center text-white max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 
+          className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight"
+          style={{ fontFamily: 'Playfair Display' }}
+        >
+          {content.hero_title}
+        </h1>
+        <p className="text-lg md:text-xl lg:text-2xl mb-12 leading-relaxed opacity-90 max-w-3xl mx-auto">
+          {content.hero_subtitle}
+        </p>
+        <button
+          onClick={scrollToProducts}
+          className="inline-flex items-center px-8 py-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
+        >
+          Shop Men
+        </button>
+      </div>
+      {/* Scroll Indicator */}
+      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white animate-bounce">
+        <button onClick={scrollToProducts} className="flex flex-col items-center space-y-2">
+          <span className="text-sm opacity-80">Scroll to explore</span>
+          <ChevronDown className="h-6 w-6" />
+        </button>
+      </div>
+    </section>
+  );
+};
+
 export const MenCollections: React.FC = () => {
   const { addToCart } = useCart();
 
@@ -250,22 +304,26 @@ export const MenCollections: React.FC = () => {
   );
 
   return (
-    <section id="men-collections" className="py-16 bg-gradient-to-b from-blue-50 to-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4" style={{ fontFamily: 'Playfair Display' }}>
-            Men Collections
-          </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Discover our latest men’s selections. Shop the best in men’s fashion and style.
-          </p>
+    <>
+      <MenHeroSection />
+      <section id="products" className="py-16 bg-gradient-to-b from-blue-50 to-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12" id="about">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4" style={{ fontFamily: 'Playfair Display' }}>
+              Men Collections
+            </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Discover our latest men’s selections. Shop the best in men’s fashion and style.
+            </p>
+          </div>
+          <CollectionGrid products={newArrivals} title="New Arrivals" id="new-arrivals" />
+          <CollectionGrid products={bestSellers} title="Best Sellers" id="best-sellers" />
+          <CollectionGrid products={nazishPicks} title="Nazish's Picks" />
+          <CollectionGrid products={products} title="Products" id="products" />
+          <AboutSection onlyWhyChoose />
         </div>
-        <CollectionGrid products={newArrivals} title="New Arrivals" id="men-new-arrivals" />
-        <CollectionGrid products={bestSellers} title="Best Sellers" id="men-best-sellers" />
-        <CollectionGrid products={nazishPicks} title="Nazish's Picks" />
-        <CollectionGrid products={products} title="Products" id="men-products" />
-      </div>
-    </section>
+      </section>
+    </>
   );
 };
 

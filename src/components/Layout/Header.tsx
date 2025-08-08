@@ -3,13 +3,15 @@ import { Search, ShoppingBag, User, Menu, X } from 'lucide-react';
 import { useAuthState } from '../../hooks/useAuth';
 import { useCart } from '../../hooks/useCart';
 
+
 interface HeaderProps {
   onCartOpen: () => void;
   onAuthOpen: () => void;
-  onMenClick?: () => void;
+  onSwitchCategory?: () => void;
+  category: 'men' | 'women';
 }
 
-export const Header: React.FC<HeaderProps> = ({ onCartOpen, onAuthOpen, onMenClick }) => {
+export const Header: React.FC<HeaderProps> = ({ onCartOpen, onAuthOpen, onSwitchCategory, category }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user } = useAuthState();
   const { totalItems } = useCart();
@@ -43,13 +45,22 @@ export const Header: React.FC<HeaderProps> = ({ onCartOpen, onAuthOpen, onMenCli
                 {item.name}
               </a>
             ))}
-            {/* Men Button */}
-            <button
-              className="ml-6 px-5 py-2 rounded-full bg-blue-400 text-white font-semibold text-sm shadow hover:bg-blue-500 transition-colors duration-200 focus:outline-none"
-              onClick={onMenClick}
-            >
-              Men
-            </button>
+            {/* Switch Category Button */}
+            {category === 'men' ? (
+              <button
+                className="ml-6 px-5 py-2 rounded-full bg-pink-400 text-white font-semibold text-sm shadow hover:bg-pink-500 transition-colors duration-200 focus:outline-none"
+                onClick={onSwitchCategory}
+              >
+                Women
+              </button>
+            ) : (
+              <button
+                className="ml-6 px-5 py-2 rounded-full bg-blue-400 text-white font-semibold text-sm shadow hover:bg-blue-500 transition-colors duration-200 focus:outline-none"
+                onClick={onSwitchCategory}
+              >
+                Men
+              </button>
+            )}
           </nav>
 
           {/* Right side actions */}
